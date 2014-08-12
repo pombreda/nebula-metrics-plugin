@@ -1,0 +1,18 @@
+buildscript {
+    repositories { jcenter() }
+    dependencies { classpath 'com.netflix.nebula:nebula-plugin-plugin:1.12.+' }
+}
+
+description 'Gather metric and build info into ElasticSearch'
+apply plugin: 'nebula-plugin'
+
+contacts {
+    'jryan@netflix.com' {
+        moniker 'Justin Ryan'
+        github 'quidryan'
+    }
+}
+
+dependencies {
+    testCompile 'com.netflix.nebula:nebula-test:1.12.+'
+}

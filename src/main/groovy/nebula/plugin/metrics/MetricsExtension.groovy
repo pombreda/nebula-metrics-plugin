@@ -11,7 +11,6 @@ import org.gradle.util.ConfigureUtil
 @Canonical
 class MetricsExtension extends ClassWithForkOptions<MetricsExtension> {
 
-    @groovy.transform.PackageScope
     ReportingProviderConfiguration providerConfiguration
 
     public MetricsExtension(DefaultJavaForkOptions forkOptions) {

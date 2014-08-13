@@ -13,12 +13,24 @@ class ReportingBuffer {
     ConcurrentLinkedQueue<Metric> metrics = new ConcurrentLinkedQueue<>();
     MolluskThread mollusk
 
-    void setSink(ReporingProvider provider) {
-        MolluskThread mollusk = new MolluskThread(metrics, provider)
+    void setSink(ReportingProvider provider) {
+        mollusk = new MolluskThread(metrics, provider)
         mollusk = mollusk.start()
     }
 
     void queue(Metric metric) {
         metrics.add(metric)
+    }
+
+    void forceStop() {
+        if (mollusk) {
+            mollusk.forceStop()
+            while (mollusk.running) {
+                try {
+                    Thread.sleep(50)
+                } catch (InterruptedException e) {
+                }
+            }
+        }
     }
 }

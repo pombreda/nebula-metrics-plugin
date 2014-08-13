@@ -17,7 +17,7 @@ class DefaultReportingProviderFactory implements ReportingProviderFactory {
         if (configuration instanceof ElasticSearchProviderConfiguration) {
             ElasticSearchProviderConfiguration esConfiguration
             if (esConfiguration.remote) {
-
+                throw new IllegalStateException("Remote ES is not supported")
             } else {
                 return new ElasticSearchInProcessProvider(esConfiguration, buildContext)
             }

@@ -32,7 +32,7 @@ class ReportingCollector {
     // For testing
     public reset() {
         if (buffer) {
-            buffer.mollusk.forceStop()
+            buffer.forceStop()
         }
         buffer = new ReportingBuffer()
     }

@@ -17,6 +17,7 @@ class MolluskThread extends Thread {
     DateTime lastAccessed
     Duration settleTime = Duration.millis(5 * 1000)
     AtomicBoolean prematurelyStop = new AtomicBoolean(false)
+    boolean running = false;
 
     MolluskThread(Queue<Metric> backlog, ReportingProvider sink) {
         super("MolluskProducer")
@@ -39,10 +40,11 @@ class MolluskThread extends Thread {
 
     @Override
     void run() {
+        running = true
         while(true) {
             List<Metric> batch = new LinkedList<Metric>()
             Metric metric
-            while ((metric = backlog.peek()) != null) {
+            while ((metric = backlog.poll()) != null) {
                 batch.add(metric)
             }
 
@@ -60,6 +62,7 @@ class MolluskThread extends Thread {
             } catch (InterruptedException e) {
             }
         }
+        running = false
     }
 
     private tooLong() {

@@ -1,52 +1,24 @@
 package nebula.plugin.metrics.providers.elasticsearch
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.google.common.collect.Sets;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.DiscoveryClient;
-import com.netflix.discovery.DiscoveryManager;
-import com.netflix.discovery.shared.Application;
+import com.google.common.collect.Sets
+import com.netflix.appinfo.InstanceInfo
+import com.netflix.discovery.DiscoveryClient
+import com.netflix.discovery.DiscoveryManager
+import com.netflix.discovery.shared.Application
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus
+import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.common.settings.ImmutableSettings
+import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-public class ESClient {
-    private Logger log = LoggerFactory.getLogger(ESClient.class);
+class EurekaClientRegistry implements ESRegistry {
+    private Logger log = LoggerFactory.getLogger(EurekaClientRegistry.class);
 
-    private TransportClient client;
     private Set<InstanceInfo> esServerSet = new HashSet<InstanceInfo>();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture<?> checkerHandle;
-    private final Properties props;
-    private final String clusterName;
-    private final int port;
 
-    public ESClient(String clusterName, int port) {
-        this.clusterName = clusterName;
-        this.port = port;                             // 7102
-        initialize();
-    }
-
-    private void initialize() {
-        Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
-        client = new TransportClient(settings);updateESRegistry();
-        final Runnable checker = new Runnable() {
-            public void run() {
-                updateESRegistry();
-            }
-        };
-        checkerHandle = scheduler.scheduleAtFixedRate(checker, 60, 60, TimeUnit.SECONDS);
-    }
-
-    private void updateESRegistry() {
+    @Override
+    public void updateESRegistry(TransportClient client, String clusterName, int port) {
         log.info("updateESRegistry...");
         try {
             Application  app = getApplication(clusterName);
@@ -76,7 +48,6 @@ public class ESClient {
             log.error("Exception while updateESRegistry: " + e.getMessage());
         }
     }
-
     private List<InstanceInfo> getInstances(String clusterName, Application app)
     {
         List<InstanceInfo> ins = app.getInstances();
@@ -124,12 +95,4 @@ public class ESClient {
         }
     }
 
-    public void shutdown() {
-        client.close();
-        checkerHandle.cancel(true);
-    }
-
-    public Client getClient() {
-        return client;
-    }
 }

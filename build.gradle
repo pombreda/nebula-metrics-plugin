@@ -1,10 +1,12 @@
 buildscript {
     repositories { jcenter() }
     dependencies { classpath 'com.netflix.nebula:nebula-plugin-plugin:1.12.+' }
+    dependencies { classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:1.12.+' }
 }
 
 description 'Gather metric and build info into ElasticSearch'
 apply plugin: 'nebula-plugin'
+apply plugin: 'nebula-optional-base'
 
 contacts {
     'jryan@netflix.com' {
@@ -15,7 +17,8 @@ contacts {
 
 dependencies {
     compile 'org.elasticsearch:elasticsearch:1.0.1'
-    compile 'com.netflix.eureka:eureka-client:latest.release'
     compile 'joda-time:joda-time:2.4'
+    compile 'com.netflix.eureka:eureka-client:latest.release', optional
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', optional
     testCompile 'com.netflix.nebula:nebula-test:1.12.+'
 }
